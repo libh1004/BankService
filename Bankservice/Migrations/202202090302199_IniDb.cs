@@ -19,6 +19,7 @@
                         Phone = c.String(),
                         Address = c.String(),
                         Email = c.String(),
+                        AccountNumber = c.String(),
                         AccountBalance = c.Double(nullable: false),
                         Amount = c.Double(nullable: false),
                         Type = c.Int(nullable: false),

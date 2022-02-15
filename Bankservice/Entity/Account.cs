@@ -15,6 +15,7 @@ namespace Bankservice.Entity
         public string Phone { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
+        public string AccountNumber { get; set; }
         public double AccountBalance { get; set; }
         public double Amount { get; set; }
         //public int Status { get; set; }
