@@ -83,6 +83,10 @@
     <Compile Include="Migrations\202202090302199_IniDb.designer.cs">
       <DependentUpon>202202090302199_IniDb.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202202151123262_InitDb.cs" />
+    <Compile Include="Migrations\202202151123262_InitDb.designer.cs">
+      <DependentUpon>202202151123262_InitDb.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\AccountModel.cs" />
     <Compile Include="Model\TransactionModel.cs" />
@@ -111,6 +115,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202202090302199_IniDb.resx">
       <DependentUpon>202202090302199_IniDb.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202202151123262_InitDb.resx">
+      <DependentUpon>202202151123262_InitDb.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

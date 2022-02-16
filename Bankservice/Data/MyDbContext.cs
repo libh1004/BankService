@@ -9,7 +9,7 @@ namespace Bankservice.Data
 {
     public class MyDbContext : DbContext
     {
-        public MyDbContext() : base("ConnectionString")
+        public MyDbContext() : base("MyConnectionString")
         {
 
         }

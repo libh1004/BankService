@@ -1,8 +1,12 @@
 ﻿using Bankservice.Data;
 using Bankservice.Entity;
 using Bankservice.Helper;
+using Bankservice.Service;
+using Bankservice.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -18,19 +22,20 @@ namespace Bankservice
     {
         private MyDbContext db = new MyDbContext();
         private MD5Helper md5Helper = new MD5Helper();
-        public bool Register(Account account)
+        private TransactionService transervice = new TransactionService();
+        public bool Register(AccountViewModel account)
         {
-           
             var newAccount = new Account()
             {
                 Username = account.Username,
                 Password = account.Password,
-                PasswordHash = account.PasswordHash,
+                PasswordHash = account.ConfirmPassword,
                 Salt = account.Salt,
                 Phone = account.Phone, 
                 Address = account.Address,
                 Email = account.Email,
                 AccountBalance = account.AccountBalance,
+                AccountNumber = transervice.CreateRandomNumbers().ToString(),
                 Amount = account.Amount,
                 Type = account.Type, 
                 CreatedAt = account.CreatedAt,
@@ -64,11 +69,6 @@ namespace Bankservice
         }
         public double Deposit(double amount)
         {
-            // kiem tra login thanh cong
-            // lay ra so du cua tk do
-            // kiem tra amount > 0 -> true -> + amount vao tk
-            // NOTICE: tat ca can duoc dua vao 1 transaction.
-
             double newBalance = 0;
             double getBalance = 10000;
             if (amount > 0)
@@ -84,10 +84,6 @@ namespace Bankservice
         }
         public double Withdrawal(double amount)
         {
-            // kiem tra login thanh cong
-            // lay ra so du tk
-            // kiem tra amount > 0, balance > amount
-            // tat ca deu duoc de trong transaction
             double newBalance = 0;
             double getBalance = 10000;
             if (amount > 0 && getBalance > amount)
@@ -108,45 +104,40 @@ namespace Bankservice
             }
             return newBalance;
         }
-        //public double Tranfer(string receiverCode, string senderCode, double amount)
-        //{
-
-        //    kiem tra login thanh cong
-        //    kiem tra tk nguoi nhan co ton tai khong
-        //     lay ra so du cua nguoi gui va nguoi nhan
-        //     kiem tra amount > 0, senderBalance > 0, senderBalance > amount
-        //     thuc hien +amount vao receiverBalance,
-        //               -amount senderBalance.
-        //    NOTICE: luu lich su giao dich vao db.
-        //     tat ca can duoc dat trong 1 transaction.
-
-        //    if (receiverCode != null)
-        //    {
-        //        double senderBalance = ;
-        //        double receiverBalance = ;
-        //        if (amount > 0 && senderBalance > 0 && senderBalance > amount)
-        //        {
-        //            double newSenderBalance = senderBalance - amount;
-        //            double newReceiverBalance = receiverBalance + amount;
-        //            Console.WriteLine("Tranfer successful!");
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine("Invalid information. Please enter again.");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("User does not exist. Please check again.");
-        //    }
-        //}
-        //public List<Transaction> TransactionHistory(string code)
-        //{
-        //    List<Transaction> transactionHistories = new List<Transaction>();
-        //    // lay tu db senderCode or receiverCode 
-        //    var getTransaction = ;
-        //    // add transaction vao list
-
-        //}
+        public Transaction Transfer(Transaction transaction)
+        {
+            using(DbContextTransaction trans = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    double amount = transaction.Amount;
+                    var sender = db.Accounts.FirstOrDefault(a => a.AccountNumber == transaction.SenderCode);
+                    var receiver = db.Accounts.FirstOrDefault(a => a.AccountNumber == transaction.ReceiverCode);
+                    if (receiver.AccountNumber == null)
+                    {
+                        Console.WriteLine("User does not exist!");
+                    }
+                    else
+                    {
+                        sender.AccountBalance = sender.AccountBalance - amount;
+                        receiver.AccountBalance = receiver.AccountBalance + amount;
+                        db.SaveChanges();
+                        trans.Commit();
+                    }
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    trans.Rollback();
+                    throw ex;
+                }
+                return transaction;
+            }
+        }
+        public List<Transaction> TransactionHistory(string AccountNumber)
+        {
+            return db.Transactions.Where(
+                m => m.ReceiverCode == AccountNumber
+                  || m.SenderCode == AccountNumber).ToList();
+        }
     }
 }

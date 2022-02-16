@@ -9,7 +9,6 @@ namespace Bankservice.Entity
     {
         public int Id { get; set; }
         public string Username { get; set; }
-        public string Password { get; set; }
         public string PasswordHash { get; set; }
         public string Salt { get; set; }
         public string Phone { get; set; }
@@ -20,8 +19,6 @@ namespace Bankservice.Entity
         public double Amount { get; set; }
         //public int Status { get; set; }
         public int Type { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
         public override string ToString()
         {
             return $" Username {Username}, Phone {Phone}";

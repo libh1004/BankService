@@ -1,4 +1,5 @@
 ﻿using Bankservice.Entity;
+using Bankservice.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace Bankservice
    public interface IService
     {
         [OperationContract]
-        bool Register(Account account);
+        bool Register(AccountViewModel account);
         [OperationContract]
         bool Login(string phone, string password);
         [OperationContract]
@@ -22,8 +23,8 @@ namespace Bankservice
         double Deposit(double amount);
         [OperationContract]
         double Withdrawal(double amount);
-        //[OperationContract]
-        //double Tranfer(double amount, string senderCode, string receiverCode);
+        [OperationContract]
+        Transaction Transfer(Transaction transaction);
         //[OperationContract]
         //Transaction TransactionHistory();
     }
